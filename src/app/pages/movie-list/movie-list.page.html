@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title translate="Movies"></ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-fab vertical="top" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onChangedLanguage(isChanged)">
+      <ion-icon name="book-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <app-loading-feedback [state]="state">
+    <ion-card class="ion-text-center" *ngIf="movies">
+      <ng-container *ngFor="let movie of movies">
+        <ion-card-header [routerLink]="[movie.id]">
+          <ion-card-title>{{movie.title}}</ion-card-title>
+          <img src="{{movie.poster}}"/>
+        </ion-card-header>
+        <ion-card-content>
+          #{{movie.genre !== undefined ?  movie.genre.toString().replace(exp, ' #') : ''}}
+        </ion-card-content>
+      </ng-container>
+
+      <ng-template #noMovie>
+        <ion-item>
+          <ion-label>No Movies Available</ion-label>
+        </ion-item>
+      </ng-template>
+    </ion-card>
+  </app-loading-feedback>
+</ion-content>

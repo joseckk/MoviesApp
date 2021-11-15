@@ -1,0 +1,65 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title translate="New Movie"></ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content *ngIf="genres && actors && companies">
+  <ion-fab vertical="top" horizontal="end" slot="fixed">
+    <ion-fab-button (click)="onChangedLanguage(isChanged)">
+      <ion-icon name="book-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+  <app-loading-feedback [state]="state" (retryPressed)="addNewMovie()">
+    <form [formGroup]="movieForm">
+      <ion-item>
+        <ion-label position="stacked" translate="Title"></ion-label>
+        <ion-input formControlName="title"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Poster"></ion-label>
+        <ion-input formControlName="poster"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Genre"></ion-label>
+        <ion-select multiple formControlName="genre">
+          <ion-select-option *ngFor="let gen of genres" [value]="gen">{{gen}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Actors"></ion-label>
+        <ion-select multiple formControlName="actors">
+          <ion-select-option *ngFor="let actor of actors" [value]="actor.id">{{actor.firstname + ' ' + actor.lastname}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Companies"></ion-label>
+        <ion-select formControlName="companieId">
+          <ion-select-option *ngFor="let companie of companies" [value]="companie.id">{{companie.name}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Year"></ion-label>
+        <ion-input formControlName="year"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Duration"></ion-label>
+        <ion-input formControlName="duration"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked" translate="Rating"></ion-label>
+        <ion-input formControlName="imdbRating"></ion-input>
+      </ion-item>
+    </form>
+  </app-loading-feedback>
+</ion-content>
+
+<ion-footer class="ion-padding ion-text-right">
+  <ion-button type="button" color="primary"
+    shape="round" (click)="addNewMovie()" [disabled]="movieForm.invalid">
+    <ion-icon name="add"></ion-icon>
+  </ion-button>
+</ion-footer>
