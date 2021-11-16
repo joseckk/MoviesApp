@@ -9,6 +9,7 @@ import { ActorsService } from 'src/app/shared/services/actors.service';
 import { CompaniesService } from 'src/app/shared/services/companies.service';
 import { MoviesService } from 'src/app/shared/services/movies.service';
 import { TranslateService } from '@ngx-translate/core';
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-movie-detail',
@@ -38,7 +39,8 @@ export class MovieDetailPage implements OnInit {
     private companiesService: CompaniesService,
     private router: ActivatedRoute,
     private router2: Router,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -105,9 +107,7 @@ export class MovieDetailPage implements OnInit {
         this.movie = movie;
         this.prevMovie = { ...movie };
         this.movieForm.patchValue({ ...this.movie });
-        console.log(this.state);
         this.state = 'loaded';
-        console.log(this.state);
       },
       (error) => {
         this.state = 'error';
@@ -120,10 +120,18 @@ export class MovieDetailPage implements OnInit {
       if (this.id) {
         const movie: Movie = { id: this.id, ...this.movieForm.value };
         this.stateUpdate = 'loading';
-        this.moviesService.updateMovie(movie).subscribe((movieSubs) => {
-          this.stateUpdate = 'loaded';
-          this.updateActor(movieSubs);
-          this.updateCompanie(this.companieId);
+        this.moviesService.updateMovie(movie).subscribe(
+          async (movieSubs) => {
+            this.stateUpdate = 'loaded';
+            this.updateActor(movieSubs);
+            this.updateCompanie(this.companieId);
+            const toast = await this.toastController.create({
+              message: 'Se ha modificado la película correctamente.',
+              duration: 2000,
+              position: 'top',
+              color: 'primary'
+            });
+            toast.present();
         },
         (error) => {
           this.stateUpdate = 'error';
@@ -134,11 +142,19 @@ export class MovieDetailPage implements OnInit {
 
   deleteMovie(): void {
     this.stateDelete = 'loading';
-    this.moviesService.deleteMovie(this.id).subscribe((movieSub) => {
-      this.stateDelete = 'loaded';
-      this.updateActor(this.movie);
-      this.updateCompanie(this.companieId);
-      this.router2.navigate(['./movie-list']);
+    this.moviesService.deleteMovie(this.id).subscribe(
+      async (movieSub) => {
+        this.stateDelete = 'loaded';
+        this.updateActor(this.movie);
+        this.updateCompanie(this.companieId);
+        this.router2.navigate(['./movie-list']);
+        const toast = await this.toastController.create({
+          message: 'Se ha eliminado la película correctamente.',
+          duration: 2000,
+          position: 'top',
+          color: 'danger'
+        });
+        toast.present();
     }, (error) =>  {
       this.state = 'error';
     });

@@ -10,7 +10,7 @@ import { CompaniesService } from 'src/app/shared/services/companies.service';
 import { MoviesService } from 'src/app/shared/services/movies.service';
 import { isNotValidDuration, isNotValidRating, isNotValidUrl, isNotValidYear } from 'src/app/utils/validators.service';
 import { TranslateService } from '@ngx-translate/core';
-
+import { ToastController } from '@ionic/angular';
 
 @Component({
   selector: 'app-new-movie',
@@ -35,7 +35,8 @@ export class NewMoviePage implements OnInit {
     private actorsService: ActorsService,
     private companiesService: CompaniesService,
     private router: Router,
-    private translateService: TranslateService
+    private translateService: TranslateService,
+    private toastController: ToastController
   ) { }
 
   ngOnInit() {
@@ -106,11 +107,19 @@ export class NewMoviePage implements OnInit {
 
   addMovie(movie: Movie): void {
     this.state = 'loading';
-    this.moviesService.getNewMovie(movie).subscribe((movieSubs: Movie) => {
-      this.state = 'loaded';
-      this.updateActor(movieSubs);
-      this.updateCompanie(this.companieId);
-      this.router.navigate(['./movie-list']);
+    this.moviesService.getNewMovie(movie).subscribe(
+      async (movieSubs: Movie) => {
+        this.state = 'loaded';
+        this.updateActor(movieSubs);
+        this.updateCompanie(this.companieId);
+        this.router.navigate(['./movie-list']);
+        const toast = await this.toastController.create({
+          message: 'Se ha añadido la película correctamente.',
+          duration: 2000,
+          position: 'top',
+          color: 'success'
+        });
+        toast.present();
     }, (error) =>  {
       this.state = 'error';
     });
